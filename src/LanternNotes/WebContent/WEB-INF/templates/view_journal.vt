@@ -1,0 +1,74 @@
+#**
+Course viewer.
+
+@author mbutcher
+*#
+#parse('frag/journal_common.vt')
+#set( $title=$ViewJournal.getMetadatum("title").FirstValue )
+#set( $relations=$GetRelatedNotes )
+#set($junk = $!menuorder.add('New Entry in This Journal')) ##use set() to avoid printing bool
+$!menuitems.put('New Entry in This Journal',"$absolute_uri/add_journal_note?doc=$ViewJournal.DocumentID")
+#set( $bcontent = {
+	'title':'About Journals',
+	'content': "<p>Journals are for your own personal use. Use a journal to record your thoughts and ideas.</p><p>You might like to create different journals for different purposes. Record ideas in an <em>Ideas</em> journal and reminders in a <em>Reminders</em> journal.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		#set($journalTitle = $ViewJournal.getMetadatum('title').FirstValue)
+		#set($journalDesc = $ViewJournal.getMetadatum('description').FirstValue)
+		#set($createdOn = $tpl.formatDate($ViewJournal.getMetadatum('created_on').FirstValue))
+		#set($createdBy = $ViewJournal.getMetadatum('created_by').FirstValue)
+		#set($lastModified = $tpl.formatDate($ViewJournal.getMetadatum('last_modified').FirstValue))
+		#set($modifiedBy = $ViewJournal.getMetadatum('modified_by').FirstValue)
+		#set($tags = $ViewJournal.getMetadatum('tag').Values)
+		#set($journalData = $ViewJournal.getData())
+		<h1 class="journal-title title">$!journalTitle</h1>
+		<div class="view-details">
+			<p><strong>Description:</strong> $journalDesc</p>
+			<p><strong>Tags: </strong>$tpl.formatTags($tags, "$absolute_uri/tag?tag=")
+			</p>
+			$journalData
+			<p><a href="$absolute_uri/edit_journal?doc=$ViewJournal.DocID"
+			class="small">&raquo; Edit Information about This Journal</a></p>
+		</div>	
+		#if($relations)
+			<table class="content_listing">
+			<caption>Journal Entries</caption>
+			<thead>
+				<tr class="content_listing_header">
+					<th>Title</th>
+					<th>Tags</th>
+					<th>Created</th>
+				</tr>
+			</thead>
+			<tbody>
+			#foreach( $rel in $relations ) 
+				<tr class="content_listing_item">
+					<td><a href="view_note?doc=$rel.DocID">$rel.getMetadatum('title').FirstValue</a></td>
+					<td>$tpl.formatTags($rel.getMetadatum('tag').Values, "$absolute_uri/tag?tag=")</td>
+					<td>$tpl.formatDate($rel.getMetadatum('created_on').FirstValue)</td>
+				</tr>
+			#end
+			</tbody>
+			
+			</table>
+		#end
+		<p>&raquo; <a href="$absolute_uri/add_journal_note?doc=$ViewJournal.DocumentID">Add a New Entry</a></p>
+		<p class="unimportant">
+		This journal was created at $createdOn#if($createdOn != $lastModified) and was last modified at 
+		$tpl.formatDate($lastModified)#end.
+		</p>
+	#end
+#end
+#parse('frag/main.vt')

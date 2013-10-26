@@ -1,0 +1,48 @@
+#**
+Add a note to a class.
+
+@author mbutcher
+*#
+#parse( "frag/sources_common.vt" )
+#set( $title="Add A Note" )
+#set($jID = $ViewSource.DocumentID)
+#set($jTitle = $ViewSource.getMetadatum('title').FirstValue)
+#set($jAuthor = $tpl.formatNames($ViewSource.getMetadatum('author').Values))
+#set($jPublisher = $ViewSource.getMetadatum('publisher').FirstValue)
+#set($jPublishDate = $ViewSource.getMetadatum('publish_date').FirstValue)
+#set($jSubjects = $tpl.formatTags($ViewSource.getMetadatum('subject').Values,"$absolute_uri/subject?subject=", "; "))
+#set($jTags = $tpl.formatTags($ViewSource.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+#set( $bcontent = {
+	'title':'About This Resource',
+	'content': "<b>Title:</b> <a href='$absolute_uri/view_source?doc=$jID'>$!jTitle</a><br/><b>Authors:</b> $!jAuthor<br/><b>Subjects:</b> $!jSubjects<br/>#if($tpl.ne($jTags))<b>Tags:</b> $!jTags<br/>#end"
+})
+#set($blocks1=[$bcontent])
+#parse('frag/tag_cloud.vt')
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		<h1>Reading Note</h1>
+		<p class="unimportant">
+		Take notes for a resource, like a book or recording. This is a note on
+		<a href="$absolute_uri/view_source?doc=$jID"
+		>$!jTitle</a>.
+		</p>
+		#set($note_save_uri = "$absolute_uri/save_source_note")
+		#set($note_parent = $jID)
+		##set($note_title = "Title")
+		##set($note_subtitle = "Subtitle")
+		##set($note_tag = "Tag A, Tag B")
+		##set($editor_body = "Note text goes here.")
+		#parse('frag/note_editor.vt')
+	#end
+#end
+#parse( "frag/main.vt" )

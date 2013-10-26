@@ -1,0 +1,10 @@
+#**
+Common settings for courses.
+*#
+#set($selectedTab = 'Listen')
+#set($title = 'Classes')
+#set($menuorder = ['Add Class','View Classes'])
+#set($menuitems = {
+	'Add Class': "$absolute_uri/add_course",
+	'View Classes': "$absolute_uri/list_courses"
+})

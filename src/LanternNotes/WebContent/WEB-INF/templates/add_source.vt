@@ -1,0 +1,24 @@
+#**
+Source editor.
+
+@author mbutcher
+*#
+#parse( "frag/sources_common.vt" )
+#set( $title="Add A Resource" )
+#set( $source_save_uri = "$absolute_uri/save_source" )
+#macro(content)
+	#if($ERRORS.containsKey("RequireAuthN"))
+	  <p>You must login before you can access Sinciput.</p>
+	  #set( $action="login" )
+	  #set( $next_request="default")
+	  #parse("frag/login_form.vt")
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	<h2 class="subsectionTitle">$title</h2>
+	<p class="unimportant">Add a new resource by hand. If the resource you are adding is 
+	likely to be found in a major library, you may find it faster to 
+	<a href="$absolute_uri/lookup_source">lookup a resource</a> instead of typing in the information by hand.</p>
+	#parse("frag/source_editor.vt")
+#end
+#parse( "frag/main.vt" )

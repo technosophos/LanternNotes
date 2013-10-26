@@ -1,0 +1,48 @@
+#**
+Journal editor.
+
+@author mbutcher
+*#
+#parse( "frag/journal_common.vt" )
+#set( $title="Change This Journal" )
+#set( $bcontent = {
+	'title':'About Journals',
+	'content': "<p>Journals are for your own personal use. Use a journal to record your thoughts and ideas.</p><p>You might like to create different journals for different purposes. Record ideas in an <em>Ideas</em> journal and reminders in a <em>Reminders</em> journal.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#if($ERRORS.containsKey("RequireAuthN"))
+	  <p>You must login before you can access Sinciput.</p>
+	  #set( $action="login" )
+	  #set( $next_request="default")
+	  #parse("frag/login_form.vt")
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#else
+		#set($journalTitle = $ViewJournal.getMetadatum('title').FirstValue)
+		#set($journalDesc = $ViewJournal.getMetadatum('description').FirstValue)
+		#set($createdOn = $tpl.formatDate($ViewJournal.getMetadatum('created_on').FirstValue))
+		#set($createdBy = $ViewJournal.getMetadatum('created_by').FirstValue)
+		#set($lastModified = $tpl.formatDate($ViewJournal.getMetadatum('last_modified').FirstValue))
+		#set($modifiedBy = $ViewJournal.getMetadatum('modified_by').FirstValue)
+		#set($tags = $ViewJournal.getMetadatum('tag').Values)
+		#set($journalData = $ViewJournal.getData())
+		<h2 class="subsectionTitle">$title</h2>
+		<p class="unimportant">Change information about this journal. Add new tags, change 
+		the name, or whatever you want. After all -- it's your journal, isn't it?</p>
+		<form method="POST" action="$absolute_uri/modify_journal">
+			<label for="title">Title</label>
+			<input type="text" name="title" id="title" value="$journalTitle"/><br/>
+			<label for="description">Description</label>
+			<input type="text" name="description" id="description" value="$journalDesc"/><br/>
+			<label for="tag">Tags</label>
+			<input type="text" name="tag" id="tag" value="$tpl.implode(', ', $tags)"/><br/>
+			#set($editor_body = $journalData)
+			#parse( "frag/editor.vt" )
+			<br/>
+			<input type="submit" value="Save Journal"/><br/>
+			<input type="hidden" name="doc" value="$ViewJournal.DocID"/>
+		</form>
+	#end
+#end
+#parse( "frag/main.vt" )

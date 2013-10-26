@@ -1,0 +1,118 @@
+#**
+Standard template for XHTML-based output.
+
+This template does NOT force auth. Use it only for pages that do not need authentication.
+
+Macros that must be defined:
+#content(): Main body content.
+
+
+This sets the following variables:
+$isLoggedIn: True if a user is logged in, false otherwise.
+
+@author mbutcher
+*#
+#set( $isLoggedIn = $_session.userLoggedIn() )
+#set($jslibs = [
+	"$resource_uri/js/jquery-1.2.1.js",
+	"$resource_uri/js/tiny_mce/tiny_mce.js",
+	"$resource_uri/js/lantern.js"
+])
+#**
+Extra navigational areas:
+*#
+#if(!$blocks1)#set( $blocks1 = [])#end
+#if($isLoggedIn)
+	#if(!$title) #set( $title = 'Lantern Notes: Be Bright!') #end
+	#if(!$selectedTab) #set( $selectedTab = 'Home') #end
+	#if(!$menuitems) 
+		#set($menuitems = {
+			"Home": "${absolute_uri}/default",
+			"About Us": "${absolute_uri}/default"
+		})
+		#set($menuorder = ['Home','About Us','Logout']) 
+	#end
+	#set($taborder = ['Classes','Resources','Journals'] )
+	#set($tabs = {
+		'Classes': "${absolute_uri}/list_courses",
+		'Resources': "${absolute_uri}/list_sources",
+		'Journals': "${absolute_uri}/list_journals"
+	})
+	
+#else 
+	#if(!$title) #set($title = "Login") #end
+	#set($menuitems = {"login": "${absolute_uri}/login"})
+	#set($taborder = []) ## No tabs
+	#set($blocks1 = [])
+#end
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>$!title</title>
+<link href="$absolute_uri/style.css" type="text/css" rel="stylesheet"/>
+#foreach($js in $jslibs)
+<script type="text/javascript" lang="Javascript" src="$js">/* */</script>
+#end
+</head>
+<body>
+<div id="headerBox">
+	<a href="$absolute_uri"><img id="logo" src="/LanternNotes/img/LanternLogoText280x99.png"/></a>
+	<ul class="tabs" id="mainTabs">
+		#foreach($tab in $taborder)
+			#set($tabUri = $tabs.get($tab))
+			#if($tab == $selectedTab) #set($tabClass = 'mainTabItemSelected')
+			#else #set($tabClass = 'mainTabItem') #end
+		<li class="$tabClass" id="${tab}Tab"><a href="$tabUri">$tab</a></li>
+		#end
+	</ul>
+	<div id="searchTab">
+##	<form action="$absolute_uri/search" id="searchForm">
+##		<input type="text" id="searchBox" class="secondaryForm" name="q"/>
+##		<input type="submit" value="Search"/>
+##		#if($isLoggedIn)
+##		<br/><strong>$_session.getUserName()</strong>
+##		[ <a href="#">my account</a> |
+##		<a href="$absolute_uri/logout">logout</a> ]
+##		#end
+##		
+##	</form>
+	</div>
+</div>
+<div id="navBox">
+	## Use coremacro subMenu macro
+	#subMenu($menuitems, $menuorder)
+</div>
+<div id="centralBox">
+	#if($blocks1.size() > 0)
+	<div id="blocks1">
+		<ul class="blocks1_list">
+		#foreach($item in $blocks1)
+			<li>
+			<div class="blocks1_header">
+			#if($item.containsKey('title'))
+			<h3 class="blocks1_title">$item.get('title')</h3>
+			#end
+			</div>
+			<div class="blocks1_content">
+			$!item.get('content')
+			</div>
+			<div class="blocks1_footer">&nbsp;</div>
+			</li>
+		#end
+		</ul>
+	</div>
+	#end
+	<div id="bodyPane">
+		#content()
+	</div>
+</div>
+<div id="footerBox">
+
+Lantern Notes Copyright &copy; 2008 <a href="http://technosophos.com">TechnoSophos</a>. 
+
+</div>
+
+</body>
+</html>

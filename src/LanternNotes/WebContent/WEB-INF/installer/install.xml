@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+	<!-- 
+	This file contains request definitions used for 
+	installing Sinciput. 
+	-->
+	<loadclass name="VerifyEnv" class="com.technosophos.lantern.commands.VerifyEnvironment"/>
+	
+	<loadclass name="GetDocument" class="com.technosophos.rhizome.command.GetDocument"/>
+	<loadclass name="info" class="com.technosophos.rhizome.command.http.DisplayInfo"/>
+	<loadclass name="URLInfo" class="com.technosophos.rhizome.command.http.URLInfo"/>
+	<loadclass name="DumpConfiguration" class="com.technosophos.rhizome.command.util.DumpConfiguration"/>
+	<loadclass name="Show" class="com.technosophos.rhizome.command.template.DoVelocityTemplate"/>
+	<requests>
+		<global>
+			<param name="base_path">
+				<value><?path base_path ?></value>
+			</param>
+			<param name="template_path">
+				<value><?path config_path?>installer/templates/</value>
+			</param>
+			<param name="real_css_path">
+				<value><?path resource_path?>css/</value>
+			</param>
+			<param name="base_url">
+				<value><?path url?></value>
+			</param>
+		</global>
+		<request name="default">
+			<cmd do="VerifyEnv"/>
+			<cmd do="Show">
+				<param name="template_name">welcome.xhtml</param>
+			</cmd>
+		</request>
+		<request name="step2">
+			<cmd do="URLInfo" prefix="test-"/>
+			<cmd do="info"/>
+		</request>
+		<request name="doc">
+			<cmd do="GetDocument">
+			</cmd>
+		</request>	
+	</requests>
+</commands>

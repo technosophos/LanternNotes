@@ -1,0 +1,25 @@
+#**
+Note editor.
+
+@author mbutcher
+*#
+#set( $title="Save A Note" )
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		<h1>$AddNote.getMetadatum('title').FirstValue</h1>
+		<p>$AddNote.getMetadatum('subtitle').FirstValue</p>
+		$AddNote.getData()
+		<p><a href="$absolute_uri/add_note">Add Another Note</a> | <a href="$absolute_uri">Home</a></p>
+	#end
+#end
+#parse( "frag/main.vt" )

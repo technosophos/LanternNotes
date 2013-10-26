@@ -1,0 +1,44 @@
+#**
+Default Sinciput template for the front page.
+
+@author mbutcher
+*#
+#set( $title="Lantern Notes: Be Bright!" )
+#macro(content)
+	<h2>Lantern Notes: A Note Taking System</h2>
+	<p>Welcome to Lantern Notes. Lantern Notes is a tool designed to help you more
+	effectively organize your studies, take notes, track research, and study.</p>
+	
+	<p>While we leave the details to you, we have have created a general note-taking framework
+	that gives you what you need to keep things organized. For starters, there are three 
+	major areas of content:</p>
+	<ul>
+		<li><strong><a href="$absolute_uri/list_courses">Classes:</a></strong> 
+		Attending lectures? This category is designed to help you track what
+		<strong>courses, seminars, lectures or conferences</strong> 
+		you've been to. Using the tools in this 
+		section, you can more efficiently take class notes, remember assignments, and 
+		keep track of what you've done, and when.</li>
+		<li><Strong><a href="$absolute_uri/list_sources">Resources:</a></strong> 
+		<strong>Books, audio and video recordings, journals, magazines</strong>; 
+		these are 
+		all types of resources. Tools in this section help you track what you've read, heard,
+		and seen. Take notes, track bibliographic information, and fetch accurate information
+		from reputable sources like the U.S. Library of Congress.</li>
+		<li><strong><a href="$absolute_uri/list_journals">Journals:</a></strong> 
+		Not all study is about what <em>they</em> say. 
+		<strong>Journals are for you.</strong>
+		Keep track of your thoughts. Jot down good ideas. Keep a log of your work. Keep
+		a private diary... whatever you want. This is your place.</li>
+	</ul>
+	<h3>Looking for Something?</h3>
+	<p>Every page has a search box in the upper-right corner of the page. Use that to find 
+	anything you've stored in Lantern Notes. Our advanced search engine can help you find 
+	exactly what you're looking for. And sometimes it turns up gems you might have forgotten.
+	<h3>Where do I start?</h3>
+	<p>There are lots of things you can do with Lantern Notes. So how do you begin? You can 
+	start adding new resources to track the books you've read. Or you can add your current 
+	class schedule. But you might find that the easiest place to begin is by <a
+	href="$absolute_uri/add_journal">creating your own journal</a>.
+#end
+#parse('frag/main.vt')

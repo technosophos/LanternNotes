@@ -1,0 +1,27 @@
+#**
+Note editor.
+
+@author mbutcher
+*#
+#parse('frag/journal_common.vt')
+#set( $title="Save A Journal" )
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  #parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	<h1>$AddJournal.getMetadatum('title').FirstValue</h1>
+	<p>$AddJournal.getMetadatum('description').FirstValue</p>
+	$AddJournal.getData()
+	<p><a href="$absolute_uri/add_journal">Add Another Journal</a> | <a href="$absolute_uri">Home</a></p>
+#end
+#parse( "frag/main.vt" )

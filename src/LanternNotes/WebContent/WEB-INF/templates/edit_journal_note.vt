@@ -1,0 +1,44 @@
+#**
+Add a note to a journal.
+
+@author mbutcher
+*#
+#parse( "frag/journal_common.vt" )
+#set( $title="Edit A Journal Entry" )
+#set($jID = $FindParent.DocumentID)
+#set($jTitle = $FindParent.getMetadatum('title').FirstValue)
+#set($jDesc = $FindParent.getMetadatum('description').FirstValue)
+#set($jTags = $tpl.formatTags($FindParent.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+##set($jTagLinks = tagLinks($jTags, "$absolute_uri/tags?tag="))
+#set( $bcontent = {
+	'title':'About This Journal',
+	'content': "<b>Title:</b> <a href='$absolute_uri/view_journal?doc=$jID'>$!jTitle</a><br/><b>Description:</b> $!jDesc<br/><b>Tags:</b> $!jTags<br/>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		<h1>Journal Entry</h1>
+		<p class="unimportant">
+		Edit this journal entry. Go ahead. No one will know.
+		</p>
+		#set($note_save_uri = "$absolute_uri/modify_journal_note")
+		#set($note_parent = $!jID)
+		#set($note_id = $ViewNote.DocID)
+		#set($note_title = $!ViewNote.getMetadatum('title').FirstValue)
+		#set($note_subtitle = $!ViewNote.getMetadatum('subtitle').FirstValue)
+		#set($note_tag = $!tpl.implode(', ', $ViewNote.getMetadatum('tag').Values))
+		#set($editor_body = $!ViewNote.Data)
+		#parse('frag/note_editor.vt')
+	#end
+#end
+#parse( "frag/main.vt" )

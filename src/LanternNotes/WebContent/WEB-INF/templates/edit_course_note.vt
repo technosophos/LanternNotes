@@ -1,0 +1,49 @@
+#**
+Add a note to a class.
+
+@author mbutcher
+*#
+#parse( "frag/courses_common.vt" )
+#set( $title="Edit A Course Note" )
+#set($jID = $FindParent.DocumentID)
+#set($jTitle = $FindParent.getMetadatum('title').FirstValue)
+#set($jCourseNumber = $FindParent.getMetadatum('course_number').FirstValue)
+#set($jInstructor = $FindParent.getMetadatum('instructor').FirstValue)
+#set($jTags = $tpl.formatTags($FindParent.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+##set($jTagLinks = tagLinks($jTags, "$absolute_uri/tags?tag="))
+#set( $bcontent = {
+	'title':'About This Course',
+	'content': "<b>Title:</b> <a href='$absolute_uri/view_journal?doc=$jID'>$!jCourseNumber $!jTitle</a><br/><b>Instructor:</b> $!jInstructor<br/><b>Tags:</b> $!jTags<br/>"
+})
+#set($blocks1=[$bcontent])
+#parse('frag/tag_cloud.vt')
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		#set($note_save_uri = "$absolute_uri/modify_course_note")
+		#set($note_parent = $!jID)
+		#set($note_id = $ViewNote.DocID)
+		#set($note_title = $!ViewNote.getMetadatum('title').FirstValue)
+		#set($note_subtitle = $!ViewNote.getMetadatum('subtitle').FirstValue)
+		#set($note_tag = $!tpl.implode(', ', $ViewNote.getMetadatum('tag').Values))
+		<h1>Edit "$!note_title"</h1>
+		<p class="unimportant">
+		Edit this class note.
+		<a href="$absolute_uri/view_course?doc=$jID"
+		>$!FindParent.getMetadatum('title').FirstValue</a>.
+		</p>
+		
+		#set($editor_body = $!ViewNote.Data)
+		#parse('frag/note_editor.vt')
+	#end
+#end
+#parse( "frag/main.vt" )

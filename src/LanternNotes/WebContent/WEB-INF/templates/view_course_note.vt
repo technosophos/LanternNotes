@@ -1,0 +1,56 @@
+#**
+view a class note.
+
+@author mbutcher
+*#
+#parse( "frag/courses_common.vt" )
+#set($title = $ViewNote.getMetadatum('title').FirstValue)
+#set($subtitle = $ViewNote.getMetadatum('subtitle').FirstValue)
+#set( $createdOn = $tpl.formatDate($ViewNote.getMetadatum('created_on').FirstValue ))
+#set( $lastModified = $tpl.formatDate($ViewNote.getMetadatum('last_modified').FirstValue ))
+#set( $tags = $tpl.formatTags($ViewNote.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+#set($jID = $FindParent.DocumentID)
+#set($jTitle = $FindParent.getMetadatum('title').FirstValue)
+#set($jCourseNumber = $FindParent.getMetadatum('course_number').FirstValue)
+#set($jInstructor = $FindParent.getMetadatum('instructor').FirstValue)
+#set($jTags = $tpl.formatTags($FindParent.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+##set($jTagLinks = tagLinks($jTags, "$absolute_uri/tags?tag="))
+#set( $bcontent = {
+	'title':'About This Course',
+	'content': "<b>Title:</b> <a href='$absolute_uri/view_course?doc=$jID'>$!jCourseNumber $!jTitle</a><br/><b>Instructor:</b> $!jInstructor<br/><b>Tags:</b> $!jTags<br/>"
+})
+#set($blocks1=[$bcontent])
+#parse('frag/tag_cloud.vt')
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		<div class="note-box">
+		<h1>$!title</h1>
+		<h3>$!subtitle</h3>
+		<p>$!tags</p>
+		<div class="note-body">
+		$!ViewNote.Data
+		<br/>
+		<a href="$absolute_uri/edit_course_note?doc=$ViewNote.DocID" 
+		   class="edit-note" >Edit</a>
+		</div>
+		#if($jID)
+		<p>&raquo; <a href="$absolute_uri/view_course?doc=$jID">Back to#if($jTitle) $jTitle#else Journal#end</a>
+		#end 
+		<p class="unimportant">
+		This class note was created at $!createdOn#if($createdOn != $lastModified) and was last modified at 
+		$lastModified#end.
+		</p>
+		</div>
+	#end
+#end
+#parse( "frag/main.vt" )

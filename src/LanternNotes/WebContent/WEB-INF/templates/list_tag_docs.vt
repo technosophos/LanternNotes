@@ -1,0 +1,64 @@
+#**
+List all journals.
+
+@author mbutcher
+*#
+##parse('frag/journal_common.vt')
+#set($tagname = $tpl.toList($tag).get(0))
+#set($title = "Tag: $!tagname")
+#set( $bcontent = {
+	'title':'About Tags',
+	'content': "<p>Tags are an organizational tool. Create tags to help you collect similar notes, sources, and journals.</p>"
+})
+#set($blocks1=[$bcontent])
+#parse('frag/tag_cloud.vt')
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	
+	<h2>$title</h2>
+	<p class="unimportant">Documents tagged $!tagname.</p>
+	<table class="content_listing">
+	<thead>
+		<tr class="content_listing_header">
+			<th>Title</th>
+			<th>Type</th>
+			<th>Description</th>
+			<th>Tags</th>
+			<th>Created</th>
+		</tr>
+	</thead>
+	<tbody>
+	#foreach( $doc in $GetDocsByTag )
+		#if(!$doc)
+		#else
+		#set($eTags = $doc.getMetadatum( 'tag' ).Values)
+		#set($docType = $doc.getMetadatum( 'type' ).FirstValue)
+		<tr class="content_listing_item">
+			<td class="content_listing_link"><a href="$absolute_uri/view_$docType?doc=$doc.DocumentID">$!doc.getMetadatum( 'title' ).FirstValue</a></td>
+			<td>$docType</td>
+			<td>$!doc.getMetadatum( 'description' ).FirstValue</td>
+			<td>$tpl.formatTags($eTags,"$absolute_uri/tag?tag=")</td>
+			<td>$tpl.formatDate($doc.getMetadatum( 'created_on' ).FirstValue)</td>
+		</tr>
+		#end
+	#end
+	</tbody>
+	</table>
+	
+	
+	
+	<a href="$absolute_uri">Lantern Home</a></p>
+#end
+#parse( "frag/main.vt" )

@@ -1,0 +1,14 @@
+#**
+resolve the type of note that should be displayed.
+
+@author mbutcher
+*#
+#if($FindParent)
+	#set($jType = $FindParent.getMetadatum('type').FirstValue)
+	##Type: $jType
+	#parse("view_${jType}_note.vt")
+	#stop
+#else
+    #parse("view_orphaned_note.vt")
+#end
+#parse( "frag/main.vt" )

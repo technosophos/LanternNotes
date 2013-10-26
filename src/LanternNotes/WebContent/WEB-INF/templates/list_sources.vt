@@ -1,0 +1,59 @@
+#**
+List all sources.
+
+@author mbutcher
+*#
+#parse('frag/sources_common.vt')
+#set( $title="Resources" )
+#set( $bcontent = {
+	'title':'About Resources',
+	'content': "<p>Resources are <strong>books</strong>, <strong>periodicals</strong>, <strong>audio and video recordings</strong>, and any other type of source material that you might use to study or do research.</p><p>Use resources to tabs on what you read, take notes while studying, and keep track of your bibliography.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/main.vt" )
+	  #stop
+	#end
+	## What we get back from ListSources command is a DocumentCollection:
+	#set( $size = $ListSources.size())
+	#set( $docs = $ListSources.getDocumentIDs() )
+	<h2 class="subsectionTitle">$title</h2>
+	<h3>There #plural($size, "is 1 resource", "are $size Resources")</h3>
+	<table  class="content_listing">
+	<thead>
+		<tr class="content_listing_header">
+			<th>Title</th>
+			<th>Author</th>
+			<th>Publisher</th>
+			<th>Created</th>
+		</tr>
+	</thead>
+	<tbody>
+	#foreach( $doc in $ListSources )
+		<tr class="content_listing_item">
+			<td class="content_listing_link"><a href="$absolute_uri/view_source?doc=$doc.DocID"><em>$!doc.getMetadatum( 'title' ).FirstValue</em></a></td>
+			<td>$!tpl.dropDateFromName($doc.getMetadatum( 'author' ).FirstValue)</td>
+			<td>$!doc.getMetadatum( 'publisher' ).FirstValue
+			$!doc.getMetadatum( 'publish_date' ).FirstValue</td>
+			<td>$!tpl.formatDate($doc.getMetadatum( 'created_on' ).FirstValue)</td>
+		</tr>
+	#end
+	</tbody>
+	</table>
+	
+	
+	
+	
+#end
+
+#parse('frag/main.vt')

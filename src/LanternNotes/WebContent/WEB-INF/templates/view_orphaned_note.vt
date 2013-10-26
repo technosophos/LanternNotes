@@ -1,0 +1,10 @@
+#**
+Add a note to a journal.
+
+@author mbutcher
+*#
+#macro(content)
+  <h1>Orphaned Note</h1>
+  <p>We could not find a parent for this note.</p>
+#end
+#parse( "frag/main.vt" )

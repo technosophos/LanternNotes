@@ -1,0 +1,135 @@
+#**
+Form for editing (Re)sources.
+
+Expects:
+$source_save_uri: URL to post form (form action)
+
+If you want values to be set, use $source_<fieldname> for the value. E.g. $source_title
+or $source_publish_place.
+*#
+<form method="POST" action="$!source_save_uri"
+<fieldset id="main_information">
+	<legend>Main Information</legend>
+	<p class="small unimportant">These are the fields generally necessary for a bibliography
+	entry.</p>
+	<ul class="lform">
+		<li class="lform_item">
+			<label for="title">Title:</label>
+			<input size="60" type="text" name="title" value="$!source_title"/><br>
+			<span class="small unimportant">The complete title of a work. Example: <em>The classical world: An epic history from Homer to Hadrian</em>.</em>.
+		</li>
+		<li class="lform_item">
+			<label for="author">Author(s):</label>
+			<input size="60" type="text" name="author" value="$!tpl.implode("; ",$source_author)"/><br/>
+			<span class="small unimportant">Format: <em>Last, First; Last, First</em>. Separate multiple authors with semicolons (;).</span>
+			
+		</li>
+		<li class="lform_item">
+			<label for="author">Editor(s):</label>
+			<input size="60" type="text" name="editor" value="$!tpl.implode("; ",$source_editor)"/><br/>
+			<span class="small unimportant">Format: <em>Last, First; Last, First</em>. Separate multiple editors with semicolons (;).</span>
+			
+		</li>
+		<li class="lform_item">
+			<label for="publisher">Publisher:</label>
+			<input size="60" type="text" name="publisher" value="$!source_publisher"/>
+			<span class="small unimportant">Name of the publishing company.</span>
+		</li>
+		<li class="lform_item">
+			<label for="publish_place">Place of Publication:</label>
+			<input size="60" type="text" name="publish_place" value="$!source_publish_place"/><br/>
+			<span class="small unimportant">Usually in the form <em>City</em>, <em>City, Province</em>, or <em>City, Sate</em>. Example: <em>Cambridge, MA</em>.
+		</li>
+		<li class="lform_item">
+			<label for="publish_place">Date of Publication:</label>
+			<input size="60" type="text" name="publish_date" value="$!source_publish_date"/>
+		</li>
+		<span class="small unimportant">Often just the year. Example: <em>1887</em>.
+		
+		
+	</ul>
+</fieldset>
+<fieldset id="identification_call_numbers">
+	<legend>Identification and Call Numbers</legend>
+	<p class="small unimportant">ISBN, Catalog Numbers, and LCCN numbers can be used
+	to locate this resource in libraries, online, and elsewhere.</p>
+	<ul class="lform">
+		<li class="lform_item">
+			<label for="isbn">ISBN:</label>
+			<input size="60" type="text" name="isbn" value="$!source_isbn"/><br>
+			<span class="small unimportant">This number is linked to the edition plus format. Format: <em>9780670063277</em> (When in doubt, use the hard cover ISBN).</span>
+		</li>
+		<li class="lform_item">
+			<label for="isbn">Catalog Number (Library of Congress):</label>
+			<input size="60" type="text" name="lcc" value="$!source_lcc"/><br>
+			<span class="small unimportant">Format: <em>B4373 .1532E5 1991</em> (The number of characters varies).</span>
+		</li>
+		<li class="lform_item">
+			<label for="isbn">Library of Congress Control Number (LCCN):</label>
+			<input size="60" type="text" name="isbn" value="$!source_lccn"/><br>
+			<span class="small unimportant">This number is linked to an edition. Format: <em>2005019197</em> or <em>87-31056</em>.</span>
+		</li>
+	</ul>
+</fieldset>
+
+<input type="submit" value=" Save Resource "/>
+<fieldset id="tags_and_subjects">
+	<legend>Tags and Subjects</legend>
+	<p class="small unimportant">Organizational categories.</p>
+	<ul class="lform">
+		<li class="lform_item">
+			<label for="author">Tags:</label>
+			<input size="60" type="text" name="editor" value="$!tpl.implode(", ",$source_tag)"/><br/>
+			<span class="small unimportant">Format: Tag A, Tag B. Separate tags with a comma (,).</span>
+		</li>
+		<li class="lform_item">
+			<label for="author">Library of Congress Subject Headings:</label>
+			<input size="60" type="text" name="subject" value="$!tpl.implode("; ",$source_subject)"/><br/>
+			<span class="small unimportant">Format: Subject A; Subject B. Separate multiple subjects with semicolons (;). If you don't know these, you can use tags instead.</span>
+		</li>
+	</ul>
+</fieldset>
+<fieldset id="additional_information">
+	<legend>Additional Source Information</legend>
+	<p class="small unimportant">Additional information about this resource.</p>
+	<ul class="lform">
+		
+		<li class="lform_item">
+			<label for="author">Translator(s):</label>
+			<input size="60" type="text" name="translator" value="$!tpl.implode("; ",$source_translator)"/><br/>
+			<span class="small unimportant">Format: <em>Last, First; Last, First</em>. Separate multiple translators with semicolons (;).</span>
+			
+		</li>
+		<li class="lform_item">
+			<label for="author">Illustrator(s):</label>
+			<input size="60" type="text" name="illustrator" value="$!tpl.implode("; ",$source_illustrator)"/><br/>
+			<span class="small unimportant">Format: <em>Last, First; Last, First</em>. Separate multiple illustrators with semicolons (;).</span>
+			
+		</li>
+		<li class="lform_item">
+			<label for="author">Genre:</label>
+			<input size="20" type="text" name="genre" value="$!source_genre"/><br/>
+			<span class="small unimportant">This can be generic (<em>fiction, nonfiction</em>) or specific (<em>ancient philosophy</em>).</span>
+			
+		</li>
+		<li class="lform_item">
+			<label for="author">Language:</label>
+			<input size="3" type="text" name="language" value="$!language"/><br/>
+			<span class="small unimportant">This should be the three-character language code (<em>eng</em>).</span>
+			
+		</li>
+		<li class="lform_item">
+			<label for="author">Type of work:</label>
+			<input size="20" type="text" name="source_type" value="$!source_source_type"/><br/>
+			<span class="small unimportant">Examples: <em>text</em>, <em>audio recording</em>, <em>video recording</em>.</span>
+		</li>
+		<li class="lform_item">
+			<label for="author">Extra Information:</label>
+			<textarea cols="60" rows="5" name="source_note">$!source_note</textarea><br/>
+			<span class="small unimportant">Extra notes on the source</span>
+		</li>
+
+	</ul>
+</fieldset>
+<input type="submit" value=" Save Resource "/>
+</form>

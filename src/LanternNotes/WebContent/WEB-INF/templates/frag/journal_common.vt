@@ -1,0 +1,10 @@
+#**
+Common settings for courses.
+*#
+#set($selectedTab = 'Reflect')
+#set($title = 'Journals')
+#set($menuorder = ['Add Journal','View Journals'])
+#set($menuitems = {
+	'Add Journal': "$absolute_uri/add_journal",
+	'View Journals': "$absolute_uri/list_journals"
+})

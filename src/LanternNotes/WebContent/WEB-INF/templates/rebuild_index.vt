@@ -1,0 +1,12 @@
+#**
+Rebuild a search index.
+@author mbutcher
+*#
+#set( $title="Rebuild Index" )
+
+
+#macro(content)
+	<h2>$title</h2>
+	<p>Done</p>
+#end
+#parse('frag/main.vt')

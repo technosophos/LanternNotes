@@ -1,0 +1,40 @@
+#**
+View lookup results.
+
+@author mbutcher
+*#
+#parse( "frag/sources_common.vt" )
+#set( $title="Lookup" )
+#macro(content)
+
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	#set( $authors = $tpl.formatNames($AddSource.getMetadatum('author').Values) )
+	#set( $publish_place = $AddSource.getMetadatum('publish_place').FirstValue)
+	#set( $publisher = $AddSource.getMetadatum('publisher').FirstValue)
+	#set( $publish_date = $AddSource.getMetadatum('publish_date').FirstValue)
+	<h3>Adding...</h3>
+	<h1>$AddSource.getMetadatum('title').FirstValue</h1>
+	<p><strong>Authors:</strong> $!authors</p>
+	<p>Published by:<br/>
+	#if($tpl.ne($publish_place))$publish_place#if($tpl.ne($publisher)): #end#end 
+	#if($tpl.ne($publisher))$publisher#if($tpl.ne($publish_date)), #end#end
+	#if($tpl.ne($publish_date))$publish_date#end
+	</p>
+	<p>
+	<a href="$absolute_uri/view_source?doc=$AddSource.DocID">View the New Resource</a> or
+	<a href="$absolute_uri/add_source_note?doc=$AddSource.DocID">Add a note</a>. 
+	</p>
+#end
+#parse( "frag/main.vt" )

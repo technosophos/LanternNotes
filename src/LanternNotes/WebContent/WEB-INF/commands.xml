@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+	<!-- Lantern Installation Commands -->
+	<loadclass name="VerifyEnv"       class="com.technosophos.lantern.commands.install.VerifyEnvironment" />
+	<loadclass name="InstallBase"     class="com.technosophos.lantern.commands.install.InstallBase" />
+	<loadclass name="InstallRedirect" class="com.technosophos.lantern.commands.install.InstallRedirect"/>
+	
+	<!-- Lantern Admin Commands -->
+	<loadclass name="AddUser"     class="com.technosophos.lantern.commands.admin.AddUser" />
+	<loadclass name="CreateUserRepository"     class="com.technosophos.lantern.commands.admin.CreateUserRepository" />
+	<loadclass name="AddUserRole"     class="com.technosophos.lantern.commands.admin.AddUserRole" />
+	<loadclass name="RebuildIndex"     class="com.technosophos.lantern.commands.admin.RebuildIndex" />
+	<loadclass name="DeleteDocument"     class="com.technosophos.lantern.commands.DeleteDocument" />
+
+	<!-- Lantern Auth Commands -->
+	<loadclass name="AuthN" class="com.technosophos.lantern.commands.auth.BasicRepositoryAuthN"/>
+	<loadclass name="AuthNLogout" class="com.technosophos.lantern.commands.auth.BasicRepositoryAuthNLogout"/>
+	<loadclass name="RequireAuthN" class="com.technosophos.lantern.commands.auth.BasicRepositoryRequireAuthN"/>
+	
+	<!-- Lantern User Commands -->
+	<loadclass name="AddNote"     class="com.technosophos.lantern.commands.notes.AddNote"/>
+	<loadclass name="ModifyNote"     class="com.technosophos.lantern.commands.notes.ModifyNote"/>
+	<loadclass name="ViewNote"     class="com.technosophos.lantern.commands.notes.ViewNote"/>
+	<loadclass name="ListNotes"     class="com.technosophos.lantern.commands.notes.ListNotes"/>
+	<loadclass name="ToParent"     class="com.technosophos.lantern.commands.notes.ToParent"/>
+	<loadclass name="FindParent"     class="com.technosophos.lantern.commands.notes.FindParent"/>
+	<loadclass name="GetRelatedNotes"     class="com.technosophos.lantern.commands.notes.GetRelatedNotes"/>
+	
+	<loadclass name="AddCourse"     class="com.technosophos.lantern.commands.course.AddCourse"/>
+	<loadclass name="ViewCourse"     class="com.technosophos.lantern.commands.course.ViewCourse"/>
+	<loadclass name="ListCourses"     class="com.technosophos.lantern.commands.course.ListCourses"/>
+	<loadclass name="ModifyCourse"     class="com.technosophos.lantern.commands.course.ModifyCourse"/>
+	
+	<loadclass name="AddJournal"     class="com.technosophos.lantern.commands.journal.AddJournal"/>
+	<loadclass name="ModifyJournal"     class="com.technosophos.lantern.commands.journal.ModifyJournal"/>
+	<loadclass name="ViewJournal"     class="com.technosophos.lantern.commands.journal.ViewJournal"/>
+	<loadclass name="ListJournals"     class="com.technosophos.lantern.commands.journal.ListJournals"/>
+	
+	<loadclass name="LookupSource" class="com.technosophos.lantern.commands.source.LookupSource"/>
+	<loadclass name="AddSource" class="com.technosophos.lantern.commands.source.AddSource"/>
+	<loadclass name="ListSources" class="com.technosophos.lantern.commands.source.ListSources"/>
+	<loadclass name="ViewSource" class="com.technosophos.lantern.commands.source.ViewSource"/>
+	<loadclass name="GetDocsBySubject" class="com.technosophos.lantern.commands.source.GetDocsBySubject"/>
+	
+	<!-- View Layer Commands -->
+	<loadclass name="ListTags" class="com.technosophos.lantern.commands.tag.ListTags"/>
+	<loadclass name="DoSimpleSearch" class="com.technosophos.lantern.commands.search.DoSimpleSearch"/>
+	<loadclass name="GetDocsByTag" class="com.technosophos.lantern.commands.tag.GetDocsByTag"/>
+	<loadclass name="template" class="com.technosophos.lantern.commands.template.DoLanternVelocityTemplate"/>
+
+	<!-- To Be Removed -->
+	<loadclass name="DumpConfiguration" class="com.technosophos.rhizome.command.util.DumpConfiguration"/>
+	<loadclass name="GetDocument"     class="com.technosophos.rhizome.command.GetDocument"/>
+	
+	<requests>
+		<global>
+			<param name="base_path">
+				<value><?path base_path ?></value>
+			</param>
+			<param name="template_path">
+				<value><?path config_path?>templates/</value>
+			</param>
+			<param name="template_macro">
+				<value>frag/coremacros.vt</value>
+			</param>
+			<param name="real_css_path">
+				<value><?path resource_path?>css/</value>
+			</param>
+			<param name="base_url">
+				<value><?path url?></value>
+			</param>
+			<param name="sru_server">
+				<value>http://z3950.loc.gov:7090/voyager</value>
+			</param>
+		</global>
+		<request name="install">
+			<cmd do="VerifyEnv" fatal="true"/>
+			<cmd do="InstallBase" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">install.xhtml</param>
+			</cmd>
+		</request>
+		<request name="install2">
+			<cmd do="AddUser">
+				<param name="default_role">admin</param>
+			</cmd>
+			<cmd do="CreateUserRepository"/>
+			<cmd do="template">
+				<param name="template_name">install2.xhtml</param>
+			</cmd>
+		</request>
+		<request name="loginform">
+			<cmd do="template">
+				<param name="template_name">login_form.vt</param>
+			</cmd>
+		</request>
+		<request name="login">
+			<cmd do="AuthN" prefix="auth-">
+				<param name="auth_failed">loginform</param>
+			</cmd>
+		</request>
+		<request name="logout">
+			<cmd do="AuthNLogout">
+				<param name="auth">loginform</param>
+			</cmd>
+		</request>
+		<request name="create_user">
+			<cmd do="template">
+				<param name="template_name">create_account.vt</param>
+			</cmd>
+		</request>
+		<request name="finish_account">
+			<cmd do="AddUser">
+				<param name="default_role">user</param>
+			</cmd>
+			<cmd do="template">
+				<param name="template_name">finish_account.vt</param>
+			</cmd>
+		</request>
+		<request name="confirm_account">
+			<cmd do="CreateUserRepository"/>
+			<cmd do="template">
+				<param name="template_name">confirm_account.vt</param>
+			</cmd>
+		</request>
+		<request name="rebuild_index">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="RebuildIndex" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">rebuild_index.vt</param>
+			</cmd>
+		</request>
+		<request name="delete_doc">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="DeleteDocument" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">rebuild_index.vt</param>
+			</cmd>
+		</request>
+		
+		<!-- NOTES -->
+		<request name="add_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			
+			<cmd do="template">
+				<param name="template_name">add_note.vt</param>
+			</cmd>
+		</request>
+		<request name="save_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddNote"/>
+			<cmd do="template">
+				<param name="template_name">save_note.vt</param>
+			</cmd>
+		</request>
+		<request name="list_notes">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListNotes"/>
+			<cmd do="template">
+				<param name="template_name">list_notes.vt</param>
+			</cmd>
+		</request>
+		<request name="view_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/> 
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_note.vt</param>
+			</cmd>
+		</request>
+		
+		<!-- COURSES -->
+		<request name="add_course">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">add_course.vt</param>
+			</cmd>
+		</request>
+		<request name="edit_course">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewCourse"/>
+			<cmd do="template">
+				<param name="template_name">edit_course.vt</param>
+			</cmd>
+		</request>
+		<request name="save_course">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddCourse"/>
+			<cmd do="template">
+				<param name="template_name">save_course.vt</param>
+			</cmd>
+		</request>
+		<request name="modify_course">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ModifyCourse"/>
+			<cmd do="ViewCourse"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_course.vt</param>
+			</cmd>
+		</request>
+		<request name="view_course">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewCourse"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_course.vt</param>
+			</cmd>
+		</request>
+		<request name="list_courses">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListCourses"/>
+			<cmd do="template">
+				<param name="template_name">list_courses.vt</param>
+			</cmd>
+		</request>
+		<request name="add_course_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListTags"/>
+			<cmd do="ViewCourse"/><!-- For displaying info about journal -->
+			<cmd do="template">
+				<param name="template_name">add_course_note.vt</param>
+			</cmd>
+		</request>
+		<request name="save_course_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddNote"/>
+			<cmd do="ToParent"/>
+			<cmd do="ViewCourse"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_course.vt</param>
+			</cmd>
+		</request>
+		<request name="view_course_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/> 
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_course_note.vt</param>
+			</cmd>
+		</request>
+		<request name="edit_course_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/>
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">edit_course_note.vt</param>
+			</cmd>
+		</request>
+		<request name="modify_course_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ModifyNote"/>
+			<cmd do="ViewNote"/>
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_course_note.vt</param>
+			</cmd>
+		</request>
+		
+		<!--  JOURNALS -->
+		<request name="add_journal">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">add_journal.vt</param>
+			</cmd>
+		</request>
+		<request name="save_journal">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddJournal"/>
+			<cmd do="template">
+				<param name="template_name">save_journal.vt</param>
+			</cmd>
+		</request>
+		<request name="modify_journal">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ModifyJournal"/>
+			<cmd do="ViewJournal"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_journal.vt</param>
+			</cmd>
+		</request>
+		<request name="edit_journal">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewJournal"/>
+			<cmd do="template">
+				<param name="template_name">edit_journal.vt</param>
+			</cmd>
+		</request>
+		<request name="view_journal">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewJournal"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_journal.vt</param>
+			</cmd>
+		</request>
+		<request name="list_journals">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListJournals"/>
+			<cmd do="template">
+				<param name="template_name">list_journals.vt</param>
+			</cmd>
+		</request>
+		<request name="add_journal_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListTags"/>
+			<cmd do="ViewJournal"/><!-- For displaying info about journal -->
+			<cmd do="template">
+				<param name="template_name">add_journal_note.vt</param>
+			</cmd>
+		</request>
+		<request name="save_journal_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddNote"/>
+			<cmd do="ToParent"/>
+			<cmd do="ViewJournal"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_journal.vt</param>
+			</cmd>
+		</request>
+		<request name="view_journal_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/> 
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_journal_note.vt</param>
+			</cmd>
+		</request>
+		<request name="edit_journal_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/>
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">edit_journal_note.vt</param>
+			</cmd>
+		</request>
+		<request name="modify_journal_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ModifyNote"/>
+			<cmd do="ViewNote"/>
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_journal_note.vt</param>
+			</cmd>
+		</request>
+		
+		<!-- RESOURCES -->
+		<request name="lookup_source">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">lookup_source.vt</param>
+			</cmd>
+		</request>
+		<request name="save_source_lookup">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="LookupSource">
+				<param name="sru_server">http://z3950.loc.gov:7090/voyager</param>
+			</cmd>
+			<cmd do="template">
+				<param name="template_name">save_source_lookup.vt</param>
+			</cmd>
+		</request>
+		<request name="add_source">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="template">
+				<param name="template_name">add_source.vt</param>
+			</cmd>
+		</request>
+		<request name="save_source">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddSource"/>
+			<cmd do="template">
+				<param name="template_name">save_source.vt</param>
+			</cmd>
+		</request>
+		<request name="list_sources">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListSources"/>
+			<cmd do="template">
+				<param name="template_name">list_sources.vt</param>
+			</cmd>
+		</request>
+		<request name="view_source">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewSource"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_source.vt</param>
+			</cmd>
+		</request>
+		<request name="add_source_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ListTags"/>
+			<cmd do="ViewSource"/>
+			<cmd do="template">
+				<param name="template_name">add_source_note.vt</param>
+			</cmd>
+		</request>
+		<request name="save_source_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="AddNote"/>
+			<cmd do="ToParent"/>
+			<cmd do="ViewSource"/>
+			<cmd do="GetRelatedNotes"/>
+			<cmd do="template">
+				<param name="template_name">view_source.vt</param>
+			</cmd>
+		</request>
+		<request name="view_source_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/> 
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_source_note.vt</param>
+			</cmd>
+		</request>
+		<request name="edit_source_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ViewNote"/>
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">edit_source_note.vt</param>
+			</cmd>
+		</request>
+		<request name="modify_source_note">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="ModifyNote"/>
+			<cmd do="ViewNote"/>
+			<cmd do="FindParent"/>
+			<cmd do="template">
+				<param name="template_name">view_source_note.vt</param>
+			</cmd>
+		</request>
+		
+		<!-- Search -->
+		<request name="tag">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="GetDocsByTag"/>
+			<cmd do="ListTags"/>
+			<cmd do="template">
+				<param name="template_name">list_tag_docs.vt</param>
+			</cmd>
+		</request>
+		<request name="subject">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="GetDocsBySubject"/>
+			<cmd do="template">
+				<param name="template_name">list_subject_docs.vt</param>
+			</cmd>
+		</request>
+		<!-- Search -->
+		<request name="search">
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="DoSimpleSearch">
+				<param name="maxSearchResults">5</param>
+			</cmd>
+			<cmd do="template">
+				<param name="template_name">search_results.vt</param>
+			</cmd>
+		</request>
+		
+		<!-- Utility pages: JS/CSS/etc. -->
+		<request name="style.css" mimetype="text/css">
+			<cmd do="template">
+				<param name="template_name">frag/style.css</param>
+			</cmd>
+		</request>
+		
+		<request name="default" mimetype="text/html">
+			<cmd do="InstallRedirect" fatal="true"/>
+			<cmd do="RequireAuthN" fatal="true"/>
+			<cmd do="DumpConfiguration"/>
+			<cmd do="template">
+				<param name="template_name">default.vt</param>
+			</cmd>
+			<!-- cmd do="DisplayInfo"/ -->
+		</request>
+		
+		<request name="info">
+			<cmd do="URLInfo" prefix="test-"/>
+			<cmd do="info"/>
+		</request>
+		<request name="doc">
+			<cmd do="GetDocument">
+			</cmd>
+		</request>	
+	</requests>
+</commands>

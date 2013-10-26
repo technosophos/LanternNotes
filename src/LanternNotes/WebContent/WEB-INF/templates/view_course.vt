@@ -1,0 +1,85 @@
+#**
+Course viewer.
+
+@author mbutcher
+*#
+#parse('frag/courses_common.vt')
+#set( $title=$ViewCourse.getMetadatum("title").FirstValue )
+#set( $relations=$ViewCourse.getRelations() )
+#set( $junk = $menuorder.add('New Note for This Class'))
+$!menuitems.put('New Note for This Class',"$absolute_uri/add_course_note?doc=$ViewCourse.DocumentID")
+#set( $bcontent = {
+	'title':'About Classes',
+	'content': "<p>This section is for taking class notes. When you start a new class, create an entry here. Then you can take notes for each class.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	#set($courseTitle = $ViewCourse.getMetadatum('title').FirstValue)
+	#set($instructor = $ViewCourse.getMetadatum('instructor').FirstValue)
+	#set($instructorEmail = $ViewCourse.getMetadatum('instructor_email').FirstValue)
+	#set($location = $ViewCourse.getMetadatum('location').FirstValue)
+	#set($startDate = $ViewCourse.getMetadatum('start_date').FirstValue)
+	#set($endDate = $ViewCourse.getMetadatum('end_date').FirstValue)
+	#set($courseNumber = $ViewCourse.getMetadatum('course_number').FirstValue)
+	#set($courseTimes = $ViewCourse.getMetadatum('course_times').FirstValue)
+	##set($courseDesc = $ViewCourse.getMetadatum('description').FirstValue)
+	#set($createdOn = $ViewCourse.getMetadatum('created_on').FirstValue)
+	#set($createdBy = $ViewCourse.getMetadatum('created_by').FirstValue)
+	#set($lastModified = $ViewCourse.getMetadatum('last_modified').FirstValue)
+	#set($modifiedBy = $ViewCourse.getMetadatum('modified_by').FirstValue)
+	#set($modifiedBy = $ViewCourse.getMetadatum('modified_by').FirstValue)
+	## Outliers:
+	#set($tags = $ViewCourse.getMetadatum('tag').Values)
+	#set($courseData = $ViewCourse.getData())
+	<h1 class="course-title">#if($courseNumber)$courseNumber:#end $!courseTitle</h1>
+	<h2 class="course-instructor">$instructor#if($instructorEmail) ($instructorEmail)#end</h2>
+	<div class="view-details">
+		<p><strong>When:</strong> $!courseTimes#if($startDate.length() > 0) ($startDate to $endDate)#end</p>
+		<p><strong>Location:</strong> $!location</p>
+		<p><strong>Tags:</strong> $!tpl.formatTags($tags, "$absolute_uri/tag?tag=")</p>
+		<p class="small"><a href="$absolute_uri/edit_course?doc=$ViewCourse.DocID">&raquo; Edit Information about This Course</a></p>
+	</div>
+	#if($courseData)<h3>Syllabus/General Notes</h3><p>$courseData</p>#end
+	
+	#if($GetRelatedNotes)
+		<table class="content_listing">
+		<caption>Notes for this class</caption>
+		<thead>
+			<tr class="content_listing_header">
+				<th>Title</th>
+				<th>Tags</th>
+				<th>Created</th>
+			</tr>
+		</thead>
+		<tbody>
+		#foreach( $rel in $GetRelatedNotes ) 
+			<tr class="content_listing_item">
+				<td><a href="view_course_note?doc=$rel.DocID">$rel.getMetadatum('title').FirstValue</a></td>
+				<td>$tpl.formatTags($rel.getMetadatum('tag').Values, "$absolute_uri/tag?tag=")</td>
+				<td>$tpl.formatDate($rel.getMetadatum('created_on').FirstValue)</td>
+			</tr>
+		#end
+		</tbody>
+		
+		</table>
+	#end
+	<p>&raquo; <a href="$absolute_uri/add_course_note?doc=$ViewCourse.DocumentID">Add a New Note</a></p>
+	<p class="unimportant">
+	This class record was created at $createdOn#if($createdOn != $lastModified) and was last modified at 
+	$tpl.formatDate($lastModified)#end.
+	</p>
+#end
+#parse('frag/main.vt')

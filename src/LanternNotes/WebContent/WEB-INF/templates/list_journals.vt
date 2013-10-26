@@ -1,0 +1,61 @@
+#**
+List all journals.
+
+@author mbutcher
+*#
+#parse('frag/journal_common.vt')
+#set( $bcontent = {
+	'title':'About Journals',
+	'content': "<p>Journals are for your own personal use. Use a journal to record your thoughts and ideas.</p><p>You might like to create different journals for different purposes. Record ideas in an <em>Ideas</em> journal and reminders in a <em>Reminders</em> journal.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	
+	## What we get back from ListJournals command is a DocumentList:
+	#set( $size = $ListJournals.size() )
+	<h2>$title</h2>
+	<h3>There #plural($size, 'is 1 journal',"are $size journals")</h3>
+	##$ListJournals.toString()
+	<table class="content_listing">
+	<thead>
+		<tr class="content_listing_header">
+			<th>Title</th>
+			<th>Description</th>
+			<th>Tags</th>
+			<th>Created</th>
+		</tr>
+	</thead>
+	<tbody>
+	#foreach( $doc in $ListJournals )
+		#if(!$doc)
+		#else
+		#set($eTags = $doc.getMetadatum( 'tag' ).Values)
+		<tr class="content_listing_item">
+			<td class="content_listing_link"><a href="$absolute_uri/view_journal?doc=$doc.DocumentID">$doc.getMetadatum( 'title' ).FirstValue</a></td>
+			<td>$doc.getMetadatum( 'description' ).FirstValue</td>
+			<td>$tpl.formatTags($eTags,"$absolute_uri/tag?tag=")</td>
+			<td>$tpl.formatDate($doc.getMetadatum( 'created_on' ).FirstValue)</td>
+		</tr>
+		#end
+	#end
+	</tbody>
+	</table>
+	
+	
+	
+	<p><a href="$absolute_uri/add_journal">Add a New Journal</a> | <a href="$absolute_uri">Lantern Home</a></p>
+#end
+#parse( "frag/main.vt" )

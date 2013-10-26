@@ -1,0 +1,56 @@
+#**
+Add a note to a journal.
+
+@author mbutcher
+*#
+#parse( "frag/journal_common.vt" )
+#set( $title = $ViewNote.getMetadatum('title').FirstValue )
+#set( $subtitle = $ViewNote.getMetadatum('subtitle').FirstValue )
+#set( $createdOn = $tpl.formatDate($ViewNote.getMetadatum('created_on').FirstValue ))
+#set( $lastModified = $tpl.formatDate($ViewNote.getMetadatum('last_modified').FirstValue ))
+#set( $tags = $tpl.formatTags($ViewNote.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+#set($jID = $FindParent.DocumentID)
+#set($jTitle = $FindParent.getMetadatum('title').FirstValue)
+#set($jDesc = $FindParent.getMetadatum('description').FirstValue)
+#set($jTags = $tpl.formatTags($FindParent.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+#if($jID)
+	#set( $bcontent = {
+		'title':'About This Journal',
+		'content': "<b>Title:</b> <a href='$absolute_uri/view_journal?doc=$jID'>$!jTitle</a><br/><b>Description:</b> $!jDesc<br/><b>Tags:</b> $!jTags<br/>"
+	})
+#end
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		<div class="note-box">
+		<h1>$!title</h1>
+		<h3>$!subtitle</h3>
+		<p>$!tags</p>
+		<div class="note-body">
+		$!ViewNote.Data
+		<br/>
+		<a href="$absolute_uri/edit_journal_note?doc=$ViewNote.DocID" 
+		   class="edit-note" >Edit</a>
+		</div>
+		#if($jID)
+		<p>&raquo; <a href="$absolute_uri/view_journal?doc=$jID">Back to#if($jTitle) $jTitle#else Journal#end</a>
+		#end 
+		<p class="unimportant">
+		This journal entry was created at $!createdOn#if($createdOn != $lastModified) and was last modified at 
+		$lastModified#end.
+		</p>
+		</div>
+	#end
+		
+#end
+#parse( "frag/main.vt" )

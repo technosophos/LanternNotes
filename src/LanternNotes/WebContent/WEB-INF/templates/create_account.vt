@@ -1,0 +1,22 @@
+#**
+Create a new user account.
+
+@author mbutcher
+*#
+#set( $title="Create An Account" )
+#macro(content)
+	#if($ERRORS.containsKey("RequireAuthN"))
+	  <p>You must login before you can access Sinciput.</p>
+	  #set( $action="login" )
+	  #set( $next_request="default")
+	  #parse("frag/login_form.vt")
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	<h2 class="subsectionTitle">$title</h2>
+	<p class="unimportant">To create an account, complete the entire form below, and then
+	press the "Create Account" button. An automatically generated password will be sent to 
+	the email address you provide below.</p>
+	#parse('frag/create_account_form.vt')
+#end
+#parse( "frag/main_noauth.vt" )

@@ -1,0 +1,21 @@
+#**
+Lookup a source.
+
+@author mbutcher
+*#
+#parse( "frag/sources_common.vt" )
+#set( $title="Find a Source" )
+#macro(content)
+	<form method="POST" action="$absolute_uri/save_source_lookup">
+		<label for="lookup_key">Lookup resource by: </label>
+		<select name="lookup_key" id="lookup_key">
+			<option value="isbn">ISBN</option>
+			<option value="issn">ISSN</option>
+			<option value="lccn">LCCN</option>
+		</select><br/>
+		<label for="lookup_value">Number: </label>
+		<input type="text" name="lookup_value" id="lookup_value" value="9780881460308"/><br/>
+		<input type="submit" value="Find it!"/><br/>
+	</form>
+#end
+#parse( "frag/main.vt" )

@@ -1,0 +1,63 @@
+#**
+List all sources that have the given subject.
+
+@author mbutcher
+*#
+##parse('frag/journal_common.vt')
+#parse('frag/sources_common.vt')
+#set($subjectname = $tpl.toList($subject).get(0))
+#set($title = "Subject: &quot;$!subjectname&quot;")
+#set( $bcontent = {
+	'title':'About Subjects',
+	'content': "<p>Many library systems, including the U.S. Library of Congress, use a set of subjects or subject headings to classify the contents of a resource (a book, periodical, recording, and so on).</p><p>Lantern allows you to browse by subject heading.</p>"
+})
+#set($blocks1=[$bcontent])
+#parse('frag/tag_cloud.vt')
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	
+	<h2>$title</h2>
+	<p class="unimportant">Documents with the subject "$!subjectname."</p>
+	<table class="content_listing">
+	<thead>
+		<tr class="content_listing_header">
+			<th>Title</th>
+			<th>Author</th>
+			<th>Subjects</th>
+			<th>Created</th>
+		</tr>
+	</thead>
+	<tbody>
+	#foreach( $doc in $GetDocsBySubject )
+		#if(!$doc)
+		#else
+		#set($eSubjects = $doc.getMetadatum( 'subject' ).Values)
+		#set($docType = $doc.getMetadatum( 'type' ).FirstValue)
+		<tr class="content_listing_item">
+			<td class="content_listing_link"><a href="$absolute_uri/view_$docType?doc=$doc.DocumentID">$!doc.getMetadatum( 'title' ).FirstValue</a></td>
+			<td>$!tpl.dropDateFromName($doc.getMetadatum( 'author' ).FirstValue)</td>
+			<td>$tpl.formatTags($eSubjects,"$absolute_uri/subject?subject=", "; ")</td>
+			<td>$tpl.formatDate($doc.getMetadatum( 'created_on' ).FirstValue)</td>
+		</tr>
+		#end
+	#end
+	</tbody>
+	</table>
+	
+	
+	
+	<a href="$absolute_uri">Lantern Home</a></p>
+#end
+#parse( "frag/main.vt" )

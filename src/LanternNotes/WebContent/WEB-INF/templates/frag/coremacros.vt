@@ -1,0 +1,71 @@
+#**
+Core macros that are used repeatedly.
+
+This should be loaded from commands.xml
+
+@author mbutcher
+*#
+#*
+<ul class="tabs navTabs">
+	<li class="navItem"><a href=#">First item</a></li>
+	<li class="navSpacer">|</li>
+	<li class="navItem"><a href=#">Second item</a></li>
+</ul>
+*#
+#macro(subMenu $menuitems $menuorder)
+	#if(!$menuorder) #set($menuorder = $menuitems.keySet()) #end
+	#set($c = $menuitems.size())
+	#set($i = 0)
+	##There are $c items in this loop: $menuitems.
+	<ul class="tabs navTabs">
+	#foreach($itemname in $menuorder)
+		#set($i = $i + 1)
+		#set($itemurl = $menuitems.get($itemname))
+		<li class="navItem"><a href="$itemurl">$itemname</a></li>
+		#if($i < $c) 
+			<li class="navSpacer">|</li>
+		#end
+	#end
+	</ul>
+#end
+
+#macro(plural $count $singular $plural)
+	#if(!$count)#set($count = 0)#end
+	#if($count == 1)$singular#else$plural#end
+#end
+
+#**
+Create a list of tags.
+@param $tags an array of tags
+@param $uri The base URI that the tag will be concatenated to.
+*#
+#macro(tagLinks $tags $uri)
+	#set($i=0)
+	#foreach($tag in $tags)
+		#if($i > 0),#end <a href="$uri$tag">$tag</a>
+		#set($i = $i+1)
+	#end
+#end
+
+#macro(testMacro)
+	Test a macro.
+#end
+
+#macro(searchResultsWindow $currPage $lastPage $maxPerPage)
+	#set($winLen = 4)
+	#set($windowObj = $DoSimpleSearch.getPageWindowObj($winLen))
+	#set($window = $windowObj.Window)
+	#set($fp = $windowObj.FirstPage)
+	#set($lp = $windowObj.LastPage)
+	
+	#if($fp > 1) ... #end
+	#foreach($item in $window)
+		#if($item == $currPage)
+			<strong>$item</strong>
+		#else
+			#set($qstr = $DoSimpleSearch.getQueryStringForPage($item))
+			<a href="$absolute_uri/search?$!qstr">$item</a>
+		#end
+	#end
+	#if($lp < $lastPage) ... #end
+#end

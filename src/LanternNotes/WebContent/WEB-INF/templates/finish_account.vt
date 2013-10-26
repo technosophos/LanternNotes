@@ -1,0 +1,22 @@
+#**
+Create a new user account.
+
+@author mbutcher
+*#
+#set( $title="Activate Your Account" )
+#macro(content)
+	#if($ERRORS.size() > 0 )
+	  #set( $title="Your Account Cannot Be Created")
+	  <h2 class="subsectionTitle">$title</h2>
+	  #foreach($err in $ERRORS.keySet())
+	  	<p class="error">$ERRORS.get($err).FriendlyErrorMessage</p>
+	  #end
+	  <p class="unimportant">Fix the error(s) and try again.</p>
+	  #parse('frag/create_account_form.vt')
+	#else
+		<h2 class="subsectionTitle">$title</h2>
+		<p class="unimportant">Now you must activate your account. Log in to your email and
+		follow the instructions we send.</p>
+	#end
+#end
+#parse( "frag/main_noauth.vt" )

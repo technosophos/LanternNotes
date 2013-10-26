@@ -1,0 +1,17 @@
+#**
+Note editor.
+
+@author mbutcher
+*#
+##parse( "frag/_common.vt" )
+#set( $title="Edit A Note" )
+#macro(content)
+	#set($note_save_uri = "$absolute_uri/save_note")
+	#set($note_parent = "cc963b45-8143-4b0d-acd3-7b6197bd2be2")
+	#set($note_title = "Title")
+	#set($note_subtitle = "Subtitle")
+	#set($note_tag = "Tag A, Tag B")
+	#set($editor_body = "Note text goes here.")
+	#parse('frag/note_editor.vt')
+#end
+#parse( "frag/main.vt" )

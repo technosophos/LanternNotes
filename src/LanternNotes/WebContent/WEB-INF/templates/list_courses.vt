@@ -1,0 +1,60 @@
+#**
+List courses.
+
+@author mbutcher
+*#
+#parse('frag/courses_common.vt')
+##set( $title="Courses" )
+##parse( "frag/standard_header.vt" )
+##parse("frag/login_trap.vt")
+#set( $bcontent = {
+	'title':'About Classes',
+	'content': "<p>This section is for taking class notes. When you start a new class, create an entry here. Then you can take notes for each class.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	
+	## What we get back from ListCourses command is a DocumentCollection:
+	#set( $size = $ListCourses.size() )
+	##set( $docs = $ListCourses.getSortedDocumentIDs("title") )
+	<h2 class="subsectionTitle">$title</h2>
+	<h3>There #plural($size, "is 1 class", "are $size classes")</h3>
+	<table class="content_listing">
+	<thead>
+		<tr class="content_listing_header">
+			<th>Course</th>
+			<th>Title</th>
+			<th>Tags</th>
+			<th>Instructor</th>
+			<th>Times</th>
+		</tr>
+	</thead>
+	<tbody>
+	#foreach( $d in $ListCourses )
+		<tr class="content_listing_item">
+			<td>$d.getMetadatum('course_number' ).FirstValue</td>
+			<td class="content_listing_link"><a href="$absolute_uri/view_course?doc=$d.getDocID()">$d.getMetadatum( 'title' ).FirstValue</a></td>
+			<td>$tpl.formatTags($d.getMetadatum('tag').Values, "$absolute_uri/tag?tag=")</td>
+			<td>$d.getMetadatum('instructor' ).FirstValue</td>
+			<td>$d.getMetadatum('course_times' ).FirstValue</td>
+		</tr>
+	#end
+	</tbody>
+	</table>
+	
+	
+#end
+#parse( "frag/main.vt" )

@@ -1,0 +1,11 @@
+#**
+Support for a GUI editor.
+
+Variables:
+$editor_body
+
+@author mbutcher
+*#
+<textarea rows="30" cols="80" name="body" id="editorArea">
+#if($editor_body)$editor_body#end
+</textarea>

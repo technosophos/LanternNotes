@@ -1,0 +1,46 @@
+#**
+Display search results.
+@author mbutcher
+*#
+#set( $title="Search results" )
+#set( $total= $DoSimpleSearch.TotalMatches )
+#set( $offset = $DoSimpleSearch.Offset )
+#set( $newOffset = $DoSimpleSearch.NextOffset )
+#set( $maxOnPage = $DoSimpleSearch.MaxResults )
+#set( $query = $DoSimpleSearch.Query )
+#set( $numPages = $DoSimpleSearch.NumberOfResultPages )
+#set( $currentPage = $DoSimpleSearch.CurrentPageNumber )
+#set( $firstRes = $DoSimpleSearch.FirstResultNumber )
+#set( $lastRes = $DoSimpleSearch.LastResultNumber )
+#set( $nextq = $DoSimpleSearch.NextQueryString )
+#set( $prevq = $DoSimpleSearch.PreviousQueryString )
+
+#macro(content)
+	<h2>Search Results</h2>
+	<p>There #plural($total,"is","are") $total #plural($total, 'match','matches') 
+	for "$tpl.e($DoSimpleSearch.Query)".</p>
+	<p class="small unimportant">Results $firstRes to $lastRes of $total.</p>
+	#if( $DoSimpleSearch.ListLength > 0 )
+		#foreach( $doc in $DoSimpleSearch.DocumentList )
+		#set($desc = $!doc.getMetadatum('description').FirstValue)
+		#set($type = $!doc.getMetadatum('type').FirstValue)
+		<p>
+		<strong><a href="$absolute_uri/view_$type?doc=$doc.DocID">$doc.getMetadatum('title').FirstValue</a></strong> <em>($type)</em><br/>
+		#if($tpl.ne($desc))$desc<br/>#end
+		$!tpl.formatTags($doc.getMetadatum('tag').Values,"$absolute_uri/tag?tag=")
+		</p>
+		#end
+		Page $currentPage of $numPages.<br/>
+		#if($currentPage > 1)<a href="$absolute_uri/search?$!prevq">&laquo;Previous</a>
+		#else<span class="unimportant">&laquo;Previous</span>
+		#end
+		&nbsp;
+		#searchResultsWindow($currentPage, $numPages, $maxOnPage)
+		&nbsp;
+		#if($currentPage < $numPages)<a href="$absolute_uri/search?$!nextq">Next&raquo;</a>
+		#else<span class="unimportant">Next&raquo;</span>
+		#end
+		
+	#end
+#end
+#parse('frag/main.vt')

@@ -1,0 +1,11 @@
+#*
+Create a tag cloud.
+*#
+#if($ListTags)
+  ##set($tcHeader = "Your Tags<br/>")
+  #set($tcBody = $tpl.tagCloud($ListTags, "$absolute_uri/tag?tag="))
+  #set($junk = $blocks1.add({
+  	'title':'Tags',
+  	'content': "<p>$tcBody</p>"
+  }))
+#end

@@ -1,0 +1,47 @@
+#**
+Add a note to a class.
+
+@author mbutcher
+*#
+#parse( "frag/courses_common.vt" )
+#set( $title="Add A Course Note" )
+#set($jID = $ViewCourse.DocumentID)
+#set($jTitle = $ViewCourse.getMetadatum('title').FirstValue)
+#set($jCourseNumber = $ViewCourse.getMetadatum('course_number').FirstValue)
+#set($jInstructor = $ViewCourse.getMetadatum('instructor').FirstValue)
+#set($jTags = $tpl.formatTags($ViewCourse.getMetadatum('tag').Values,"$absolute_uri/tag?tag="))
+##set($jTagLinks = tagLinks($jTags, "$absolute_uri/tags?tag="))
+#set( $bcontent = {
+	'title':'About This Course',
+	'content': "<b>Title:</b> <a href='$absolute_uri/view_journal?doc=$jID'>$!jCourseNumber $!jTitle</a><br/><b>Instructor:</b> $!jInstructor<br/><b>Tags:</b> $!jTags<br/>"
+})
+#set($blocks1=[$bcontent])
+#parse('frag/tag_cloud.vt')
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	#else
+		<h1>Class Note</h1>
+		<p class="unimportant">
+		Take notes for a class reading or lecture.
+		<a href="$absolute_uri/view_course?doc=$jID"
+		>$!ViewCourse.getMetadatum('title').FirstValue</a>.
+		</p>
+		#set($note_save_uri = "$absolute_uri/save_course_note")
+		#set($note_parent = $jID)
+		##set($note_title = "Title")
+		##set($note_subtitle = "Subtitle")
+		##set($note_tag = "Tag A, Tag B")
+		##set($editor_body = "Note text goes here.")
+		#parse('frag/note_editor.vt')
+	#end
+#end
+#parse( "frag/main.vt" )

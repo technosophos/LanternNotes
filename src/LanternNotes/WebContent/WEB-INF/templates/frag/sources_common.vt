@@ -1,0 +1,11 @@
+#**
+Common settings for courses.
+*#
+#set($selectedTab = 'Study')
+#set($title = 'Resources')
+#set($menuorder = ['Add Resource','View Resources','Lookup Source'])
+#set($menuitems = {
+	'Add Resource': "$absolute_uri/add_source",
+	'View Resources': "$absolute_uri/list_sources",
+	'Lookup Source': "$absolute_uri/lookup_source"
+})

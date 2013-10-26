@@ -1,0 +1,141 @@
+#**
+Course viewer.
+
+@author mbutcher
+*#
+#parse('frag/sources_common.vt')
+#set( $title=$ViewSource.getMetadatum("title").FirstValue )
+#set( $relations=$ViewSource.getRelations() )
+#set( $junk = $menuorder.add('New Note for This Resource'))
+$!menuitems.put('New Note for This Resource',"$absolute_uri/add_source_note?doc=$ViewSource.DocumentID")
+#set( $bcontent = {
+	'title':'About Resources',
+	'content': "<p>Resources are <strong>books</strong>, <strong>periodicals</strong>, <strong>audio and video recordings</strong>, and any other type of source material that you might use to study or do research.</p><p>Use resources to tabs on what you read, take notes while studying, and keep track of your bibliography.</p>"
+})
+#set($blocks1=[$bcontent])
+#macro(content)
+	#set( $keys = $ERRORS.keySet())
+	#if($keys.size() > 0 )
+		#foreach( $err in $ERRORS ) 
+			<p>ERROR: $err</p>
+			<pre>
+			#foreach( $b in $body )
+				$b
+			#end
+			</pre>
+		#end
+	  ##parse( "frag/standard_footer.vt" )
+	  #stop
+	#end
+	
+	## MANY VALUES
+	#set($author = $ViewSource.getMetadatum('author').Values)
+	#set($editor = $ViewSource.getMetadatum('editor').Values)
+	#set($translator = $ViewSource.getMetadatum('translator').Values)
+	#set($illustrator = $ViewSource.getMetadatum('illustrator').Values)
+	#set($subject = $ViewSource.getMetadatum('subject').Values)
+	#set($source_type = $ViewSource.getMetadatum('source_type').Values)
+	#set($identifier = $ViewSource.getMetadatum('identifier').Values)
+	#set($classification = $ViewSource.getMetadatum('classification').Values)
+	#set($location_url = $ViewSource.getMetadatum('location_url').Values)
+	
+	## SINGLE VALUE:
+	##set($courseTitle = $ViewSource.getMetadatum('title').FirstValue)
+	#set($publisher = $ViewSource.getMetadatum('publisher').FirstValue)
+	#set($publish_date = $ViewSource.getMetadatum('publish_date').FirstValue)
+	#set($publish_place = $ViewSource.getMetadatum('publish_place').FirstValue)
+	#set($edition = $ViewSource.getMetadatum('edition').FirstValue)
+	#set($genre = $ViewSource.getMetadatum('genre').FirstValue)
+	#set($language = $ViewSource.getMetadatum('language').FirstValue)
+	#set($abstract = $ViewSource.getMetadatum('abstract').FirstValue)
+	#set($table_of_contents = $ViewSource.getMetadatum('table_of_contents').FirstValue)
+	#set($target_audience = $ViewSource.getMetadatum('target_audience').FirstValue)
+	#set($note = $ViewSource.getMetadatum('note').FirstValue)
+	#set($createdOn = $ViewSource.getMetadatum('created_on').FirstValue)
+	#set($createdBy = $ViewSource.getMetadatum('created_by').FirstValue)
+	#set($lastModified = $ViewSource.getMetadatum('last_modified').FirstValue)
+	#set($modifiedBy = $ViewSource.getMetadatum('modified_by').FirstValue)
+	#set($modifiedBy = $ViewSource.getMetadatum('modified_by').FirstValue)
+	
+	## Outliers: Source usually won't have this
+	#set($tags = $ViewSource.getMetadatum('tag').Values)
+	
+	<h1 class="course-title">$!title#if($tpl.notEmpty($edition)), $edition</li>#end</h1>
+	<ul class="creator-list">
+	#if($tpl.notEmpty($author))<li>By $tpl.formatNames($author)#end
+	#if($tpl.notEmpty($editor))<li>Edited by $tpl.formatNames($editor)</li>#end
+	#if($tpl.notEmpty($illustrator))<li>Illustrated by $tpl.formatNames($illustrator)</li>#end
+	#if($tpl.notEmpty($translator))<li>Translated by $tpl.formatNames($translator)</li>#end
+	</ul>
+	<p>#if($publisher)
+	Published by $publisher#if($tpl.notEmpty($publish_place)), $publish_place#end#if($tpl.notEmpty($publish_date)): $publish_date#end
+	#end</p>
+	
+	#if($tpl.notEmpty($subject))<strong>Subjects:</strong> $tpl.formatTags($subject, "$absolute_uri/subject?subject=", "; ")<br/>#end
+	#if($tpl.notEmpty($identifier))
+	<dl class="identifier-list"> 
+		#set($idList = $tpl.parseIdentifier($identifier))
+		#foreach($idObj in $idList)
+			#if(!$idObj.LabelCode.equalsIgnoreCase('uri'))
+			<dt>$idObj.LabelString</strong>:</td><dd>$idObj.ID</dd>
+			#end
+		#end
+		#if($tpl.notEmpty($classification))
+			#set($idList = $tpl.parseIdentifier($classification))
+			#foreach($idObj in $idList)
+				#if(!$idObj.LabelCode.equalsIgnoreCase('uri'))
+				<dt>$idObj.LabelString:</dt> <dd>$idObj.ID</dd>
+				#end
+			#end
+		#end
+	</dl>
+	#end
+	<p class="small unimportant">
+	#if($tpl.notEmpty($location_url))
+		<strong>External References:</strong>
+		#set($lurls = $tpl.parseLabeledURI($location_url))
+		#set($refs = [])
+		#foreach($item  in $lurls.keySet())
+			#set($label = $lurls.get($item))
+			#set($junk = $refs.add("<a href='$item'>$lurls.get($item)</a>"))
+		#end
+		$tpl.implode(', ', $refs)<br/>
+	#end
+	#if($tpl.notEmpty($source_type))<strong>Type of Resource:</strong> $tpl.implode(', ', $source_type)<br/>#end
+	#if($tpl.notEmpty($genre))<strong>Genre:</strong> $genre<br/>#end
+	#if($tpl.notEmpty($language))<strong>Language:</strong> $language<br/>#end
+	#if($tpl.notEmpty($target_audience))<strong>Target Audience:</strong> $target_audience<br/>#end
+	</p>
+	#if($tpl.notEmpty($abstract))<p class="small unimportant"><strong>Abstract:</strong><br/>$abstract</p>#end
+	#if($tpl.notEmpty($table_of_contents))<p class="small unimportant"><strong>Contents:</strong><br/>$table_of_contents</p>#end
+	#if($tpl.notEmpty($note))<p class="small unimportant"><strong>Extra Information:</strong><br/>$note</p>#end
+
+	#if($GetRelatedNotes)
+		<table class="content_listing">
+		<caption>Notes for this class</caption>
+		<thead>
+			<tr class="content_listing_header">
+				<th>Title</th>
+				<th>Tags</th>
+				<th>Created</th>
+			</tr>
+		</thead>
+		<tbody>
+		#foreach( $rel in $GetRelatedNotes ) 
+			<tr class="content_listing_item">
+				<td><a href="view_source_note?doc=$rel.DocID">$rel.getMetadatum('title').FirstValue</a></td>
+				<td>$tpl.formatTags($rel.getMetadatum('tag').Values, "$absolute_uri/tag?tag=")</td>
+				<td>$tpl.formatDate($rel.getMetadatum('created_on').FirstValue)</td>
+			</tr>
+		#end
+		</tbody>
+		
+		</table>
+	#end
+	<p>&raquo; <a href="$absolute_uri/add_source_note?doc=$ViewSource.DocumentID">Add a New Note</a></p>
+	<p class="unimportant">
+	This resource was added at $tpl.formatDate($createdOn)#if($createdOn != $lastModified) and was last modified at 
+	$tpl.formatDate($lastModified)#end.
+	</p>
+#end
+#parse('frag/main.vt')
